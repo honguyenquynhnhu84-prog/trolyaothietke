@@ -1,6 +1,7 @@
 import streamlit as st
 
-st.title("🎈 My new app")
+st.title("🎈 TRỢ LÝ AI HỖ TRỢ GIÁO VIÊN THIẾT KẾ BÀI DẠY STEM")
 st.write(
-    "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
+    "TÔI LÀ QUỲNH NHƯ"
+    
 )
