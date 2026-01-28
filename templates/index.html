@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 Trợ lý soạn giáo án STEM 3089</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+        
+        .sidebar {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .checkbox-item label {
+            margin: 0;
+            font-weight: 400;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .preview-box {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 600px;
+            overflow-y: auto;
+            border-left: 4px solid #667eea;
+        }
+        
+        .preview-box.active {
+            display: block;
+        }
+        
+        .preview-box h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .preview-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #f5c6cb;
+            display: none;
+            margin-bottom: 15px;
+        }
+        
+        .error-box.active {
+            display: block;
+        }
+        
+        .btn-download {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            margin-top: 10px;
+        }
+        
+        .btn-download:hover:not(:disabled) {
+            box-shadow: 0 5px 20px rgba(52, 211, 153, 0.4);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            color: #666;
+            font-size: 12px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Trợ lý Soạn giáo án STEM 3089</h1>
+            <p>Tự động hóa soạn thảo theo quy chuẩn Bộ Giáo dục & Đào tạo (✨ Không cần đăng nhập GitHub)</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3 style="margin-bottom: 20px; color: #333;">📌 Thông tin chung</h3>
+                
+                <div class="form-group">
+                    <label for="khoi">🎯 Khối lớp</label>
+                    <select id="khoi" required>
+                        <option value="6">Lớp 6</option>
+                        <option value="7">Lớp 7</option>
+                        <option value="8">Lớp 8</option>
+                        <option value="9">Lớp 9</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ten_bai">📚 Tên bài dạy</label>
+                    <input type="text" id="ten_bai" placeholder="VD: Chế tạo đèn ngủ thông minh" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chu_trinh">🔄 Chu trình áp dụng</label>
+                    <select id="chu_trinh" required>
+                        <option value="Thiết kế kỹ thuật (6 bước)">Thiết kế kỹ thuật (6 bước)</option>
+                        <option value="Nghiên cứu khoa học (5 bước)">Nghiên cứu khoa học (5 bước)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>🛠 Hoạt động cần soạn</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hd_all" checked>
+                            <label for="hd_all">Tất cả các hoạt động</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hd1">
+                            <label for="hd1">HĐ 1: Xác định vấn đề</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hd2">
+                            <label for="hd2">HĐ 2: Nghiên cứu kiến thức nền</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hd3">
+                            <label for="hd3">HĐ 3: Đề xuất giải pháp/Thiết kế</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hd4">
+                            <label for="hd4">HĐ 4: Chế tạo/Thử nghiệm</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hd5">
+                            <label for="hd5">HĐ 5: Trình bày/Thảo luận</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" id="btn_generate">🚀 Bắt đầu soạn bài</button>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="error-box" id="error_box"></div>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>AI đang phân tích và soạn thảo...</p>
+                </div>
+                <div class="preview-box" id="preview_box">
+                    <h3>📝 Nội dung giáo án:</h3>
+                    <div class="preview-content" id="preview_content"></div>
+                </div>
+                <button class="btn btn-download" id="btn_download" style="display: none;">📥 Tải xuống (.docx)</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            💡 Ứng dụng này không yêu cầu đăng nhập GitHub hoặc tài khoản bên ngoài. Chạy hoàn toàn cục bộ trên máy của bạn.
+        </div>
+    </div>
+    
+    <script>
+        const khoi = document.getElementById('khoi');
+        const tenBai = document.getElementById('ten_bai');
+        const chuTrinh = document.getElementById('chu_trinh');
+        const btnGenerate = document.getElementById('btn_generate');
+        const btnDownload = document.getElementById('btn_download');
+        const loading = document.getElementById('loading');
+        const previewBox = document.getElementById('preview_box');
+        const previewContent = document.getElementById('preview_content');
+        const errorBox = document.getElementById('error_box');
+        
+        let currentContent = '';
+        let currentTenBai = '';
+        
+        // Checkbox logic
+        const hdAll = document.getElementById('hd_all');
+        const hdCheckboxes = [
+            document.getElementById('hd1'),
+            document.getElementById('hd2'),
+            document.getElementById('hd3'),
+            document.getElementById('hd4'),
+            document.getElementById('hd5')
+        ];
+        
+        hdAll.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                hdCheckboxes.forEach(cb => cb.checked = false);
+            }
+        });
+        
+        hdCheckboxes.forEach(cb => {
+            cb.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    hdAll.checked = false;
+                }
+            });
+        });
+        
+        // Generate button
+        btnGenerate.addEventListener('click', async () => {
+            // Validate
+            if (!tenBai.value.trim()) {
+                showError('❌ Vui lòng nhập tên bài dạy!');
+                return;
+            }
+            
+            // Get selected activities
+            let hoatDong = [];
+            if (hdAll.checked) {
+                hoatDong = ['Tất cả các hoạt động'];
+            } else {
+                if (hdCheckboxes[0].checked) hoatDong.push('HĐ 1: Xác định vấn đề');
+                if (hdCheckboxes[1].checked) hoatDong.push('HĐ 2: Nghiên cứu kiến thức nền');
+                if (hdCheckboxes[2].checked) hoatDong.push('HĐ 3: Đề xuất giải pháp/Thiết kế');
+                if (hdCheckboxes[3].checked) hoatDong.push('HĐ 4: Chế tạo/Thử nghiệm');
+                if (hdCheckboxes[4].checked) hoatDong.push('HĐ 5: Trình bày/Thảo luận');
+                
+                if (hoatDong.length === 0) {
+                    hoatDong = ['Tất cả các hoạt động'];
+                }
+            }
+            
+            // Show loading
+            clearError();
+            previewBox.classList.remove('active');
+            btnDownload.style.display = 'none';
+            loading.style.display = 'block';
+            btnGenerate.disabled = true;
+            
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ten_bai: tenBai.value.trim(),
+                        khoi: khoi.value,
+                        chu_trinh: chuTrinh.value,
+                        hoat_dong: hoatDong
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Lỗi không xác định');
+                }
+                
+                currentContent = data.content;
+                currentTenBai = data.ten_bai;
+                previewContent.textContent = currentContent;
+                previewBox.classList.add('active');
+                btnDownload.style.display = 'block';
+            } catch (error) {
+                showError('❌ ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+                btnGenerate.disabled = false;
+            }
+        });
+        
+        // Download button
+        btnDownload.addEventListener('click', async () => {
+            btnDownload.disabled = true;
+            try {
+                const response = await fetch('/api/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: currentContent,
+                        ten_bai: currentTenBai
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Lỗi tải file');
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Giao_an_STEM_${currentTenBai}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                showError('❌ ' + error.message);
+            } finally {
+                btnDownload.disabled = false;
+            }
+        });
+        
+        function showError(msg) {
+            errorBox.textContent = msg;
+            errorBox.classList.add('active');
+        }
+        
+        function clearError() {
+            errorBox.classList.remove('active');
+            errorBox.textContent = '';
+        }
+    </script>
+</body>
+</html>
